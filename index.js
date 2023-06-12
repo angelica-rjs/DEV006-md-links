@@ -6,16 +6,27 @@
 const path = require('path');
 let fs = require('fs');
 
-
-
-/*
-function mdLink (ruta, option){
- 
+function prueba(){
+let ruta = '/hola.txt'
+mdLink(ruta);
 }
 
-function validate(ruta, option){
+function mdLink(ruta){
+  if (path.isAbsolute(ruta)){
+    console.log("es absoluta")
+  }else{
+    route(ruta)
+  }
+ 
+}
+prueba();
 
- if( !path && typeof option === "boolean"){
+
+/*function validate(ruta, option){
+
+const ruta = "./hola.txt";
+  const option = true;
+  if( ruta  !== null && typeof option === "boolean"){
     if (path.isAbsolute(ruta)){
 
     }else{
@@ -33,11 +44,11 @@ function validate(ruta, option){
 
 function route(ruta){
   //"./hola.txt"
-const rutaRelativa = ruta;
-const rutaAbsoluta = path.resolve(rutaRelativa);
-console.log('Ruta absoluta:', rutaAbsoluta);
+  const rutaRelativa = ruta;
+  const rutaAbsoluta = path.resolve(rutaRelativa);
+  console.log('Ruta absoluta:', rutaAbsoluta);
 }
-route()
+//route()
 
 
 
