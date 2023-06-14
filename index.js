@@ -1,36 +1,99 @@
 /*export default () => {
   const fs = required('fs')
 };*/
-//mdLink("","")
 
 const path = require('path');
 let fs = require('fs');
 
 
-mdLink('C://Users/ange_/DEV006-md-links/hola.txt')
+//mdLink('C://Users/ange_/DEV006-md-links/prueba2.md')
 
 function mdLink(ruta, option = {validate: false}){
-  //valido con campos de entrada
   validate(ruta, option)
-
-  //llamo a funcion para generar ruta absoluta
   ruta = generateRoute(ruta)
-
   console.log('Ruta absoluta:', ruta);
-  //verifico si la ruta existe
   routeExists(ruta)
-  //llamo a isDirectory para ver si es direcotrio o archivo
-  const pathType=isDirectory(ruta)
-  /*if( pathType == true){
-
+  //leerArchivo(ruta)
+  let pathType= isDirectory(ruta)
+  if( pathType == true){
+    //directorio
+    searchFiles()
   }else{
-
-  }*/
- 
-
-  //TODO: crear una promesa y a regresar
+    //Archivo
+    getExtension(ruta)
+  }
+  leerArchivo(ruta)
+ //TODO: crear una promesa y a regresar
 }
 
+
+
+function getExtension(ruta){
+  let routes = []
+
+  if(ruta.split(".").pop() == "md"){
+    routes.push(ruta)
+    console.log("es md")
+    //se retorna en un array
+    console.log(routes[0])
+  }else{
+    console.log("no es md")
+    //TODO: se debe acabar el flujo ? que pasa si hay mas archivo esperando validar?
+  }
+
+}
+
+const result = searchFiles('C://Users/ange_/DEV006-md-links/directorio1')
+console.log(result)
+function searchFiles(directorio){
+  //TODO: ASINCRONA
+  const archivos = fs.readdirSync(directorio);
+  //console.log(archivos)
+
+  if (archivos.length === 0) {
+    console.log('El directorio está vacío');
+  }
+  let newfiles = {};
+
+  archivos.forEach((file) => {
+    const fileObsolute = path.resolve(directorio, file);
+    if (fs.lstatSync(fileObsolute).isDirectory()) {
+      //console.log(file);
+      newfiles.push(searchFiles(fileObsolute)) 
+    } else {
+      newfiles.push(fileObsolute);
+      
+    }
+  });
+  //console.log(newfiles);
+  return newfiles;
+}
+
+//TODO: revisar leerArchivo y cambiar nombre 
+async function leerArchivo(ruta){
+  //Para este proyecto te sugerimos no utilizar la versión síncrona de 
+  //la función para leer archivos, readFileSync, y en cambio intentar 
+  //resolver este desafío de manera asíncrona.
+  // TODO: asincrono
+  fs.readFile(ruta, 'utf-8', (err, data) => {
+    if (err){
+       throw err;}
+    console.log("El contenido es: ", data);
+    // BLOQUEO: ¿Debo aca obtener los link?
+    //TODO: Debe retornar algo ?
+    
+  })
+}
+
+
+
+/* obtener todos los .md de un diretorio 
+ files.forEach(file => {
+  if (path.extname(file) == ".md")
+    console.log(file);
+}) */
+
+//TERMINADAS    
 function validate(ruta, option){
   if(ruta == null){
     throw new TypeError("La ruta no debe ser nula")
@@ -44,12 +107,14 @@ function generateRoute(ruta){
   if (path.isAbsolute(ruta)){
     console.log("es absoluta")
   }else{
+    console.log("es relativa")
     ruta = path.resolve(ruta);
     }
   return ruta
 }
 
 function routeExists(ruta){
+  //sincrono
   try {
     fs.accessSync(ruta);
     console.log("la ruta existe")
