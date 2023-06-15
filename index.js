@@ -6,7 +6,7 @@ const path = require('path');
 let fs = require('fs');
 
 
-//mdLink('C://Users/ange_/DEV006-md-links/prueba2.md')
+mdLink('C://Users/ange_/DEV006-md-links/directorio1')
 
 function mdLink(ruta, option = {validate: false}){
   validate(ruta, option)
@@ -17,12 +17,14 @@ function mdLink(ruta, option = {validate: false}){
   let pathType= isDirectory(ruta)
   if( pathType == true){
     //directorio
-    searchFiles()
+    const result = searchFiles(ruta)
+    console.log("resultado de searchFiles: ",result)
+
   }else{
     //Archivo
     getExtension(ruta)
   }
-  leerArchivo(ruta)
+  //leerArchivo(ruta)
  //TODO: crear una promesa y a regresar
 }
 
@@ -43,31 +45,50 @@ function getExtension(ruta){
 
 }
 
-const result = searchFiles('C://Users/ange_/DEV006-md-links/directorio1')
-console.log(result)
-function searchFiles(directorio){
-  //TODO: ASINCRONA
-  const archivos = fs.readdirSync(directorio);
-  //console.log(archivos)
 
+function searchFiles(directorio){
+  console.log("directorio", directorio)
+  const archivos = fs.readdirSync(directorio);
   if (archivos.length === 0) {
     console.log('El directorio está vacío');
   }
-  let newfiles = {};
-
+  //creo el arreglo
+  allFiles = []
+  
   archivos.forEach((file) => {
     const fileObsolute = path.resolve(directorio, file);
-    if (fs.lstatSync(fileObsolute).isDirectory()) {
-      //console.log(file);
-      newfiles.push(searchFiles(fileObsolute)) 
-    } else {
-      newfiles.push(fileObsolute);
-      
+    if (fs.lstatSync(fileObsolute).isDirectory()){
+      getRecursiveFiles =searchFiles(fileObsolute)
+      console.log("busqueda de archivo: " ,fileObsolute) 
+      allFiles.concat(getRecursiveFiles)
+    }else{
+      const route ={
+        ruta: file,
+      }
+      allFiles.push(route)
     }
+     
   });
-  //console.log(newfiles);
-  return newfiles;
+  return allFiles;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //TODO: revisar leerArchivo y cambiar nombre 
 async function leerArchivo(ruta){
