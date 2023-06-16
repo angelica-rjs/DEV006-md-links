@@ -7,7 +7,7 @@ let fs = require('fs');
 
 let allFiles = []
 
-mdLink('C://Users/ange_/DEV006-md-links/directorio1')
+mdLink('C://Users/ange_/DEV006-md-links/directorio1/')
 /*-------------------------------------------------------- */
 function mdLink(ruta, option = {validate: false}){
   validate(ruta, option)
@@ -15,34 +15,23 @@ function mdLink(ruta, option = {validate: false}){
   console.log('Ruta absoluta:', ruta);
   routeExists(ruta)
   let pathType= isDirectory(ruta)
+  //TODO:refactorizar el if
   if( pathType == true){
-    //directorio
-    const result = searchFiles(ruta)
-    console.log("todos los archivos del directorio: ", result)
-    //console.log("resultado de searchFiles: ",result)
-
+    const allFile = searchFiles(ruta)
+    const filesMd =getMds(allFile)
   }else{
-    //Archivo
-    getExtension(ruta)
+    allFiles.push(ruta)
+    getMds(allFiles)
+    const filesMd =getMds(allFile)
   }
-  //leerArchivo(ruta)
  //TODO: crear una promesa y a regresar
 }
 /*-------------------------------------------------------- */
-
-
-function getExtension(ruta){
-  let routes = []
-
-  if(ruta.split(".").pop() == "md"){
-    routes.push(ruta)
-    console.log("es md")
-    //se retorna en un array
-    console.log(routes[0])
-  }else{
-    console.log("no es md")
-    //TODO: se debe acabar el flujo ? que pasa si hay mas archivo esperando validar?
-  }
+function processFile(files){
+  console.log(files)
+  //TODO: verificar la extencion de cada archivo 
+  //TODO: abrir el archivo y obtener los link 
+  //TODO:  -validate: true
 
 }
 
@@ -61,14 +50,6 @@ async function leerArchivo(ruta){
     
   })
 }
-
-/* obtener todos los .md de un diretorio 
- files.forEach(file => {
-  if (path.extname(file) == ".md")
-    console.log(file);
-}) */
-
-
 
 //TERMINADAS    
 function validate(ruta, option){
@@ -106,8 +87,8 @@ function isDirectory(ruta){
     console.log("es un directorio")
     return true
   }else{
-    console.log("es un archivo")
     
+    console.log("es un archivo")
   }
 }
 
@@ -123,12 +104,32 @@ function searchFiles(directorio){
       const getRecursiveFiles =searchFiles(fileObsolute)
       allFiles.concat(getRecursiveFiles)
     }else{
-      const route ={
-        ruta: file,
-      }
-      allFiles.push(route)
+      allFiles.push(fileObsolute)
     }
   });
 
   return allFiles;
+}
+
+function getMds(allfiles) {
+  const archivosMd = allfiles.filter(archivo => {
+    if (typeof archivo === "string" && archivo.split(".").pop() === "md") {
+      console.log("Es md: ",  archivo);
+      return true;
+    } else {
+      console.log("No es md: ", archivo);
+      return false;
+    }
+  });
+
+  allfiles.length = 0; 
+  allFiles.push.apply(allfiles, archivosMd);
+  
+
+  if(allFiles.length > 0){
+    console.log("array filtrado: ", allFiles)
+  return allfiles;
+  }else{
+    console.log("fin del flujo, no se encontro md")
+  }
 }
