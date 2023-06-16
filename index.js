@@ -5,20 +5,21 @@
 const path = require('path');
 let fs = require('fs');
 
+let allFiles = []
 
 mdLink('C://Users/ange_/DEV006-md-links/directorio1')
-
+/*-------------------------------------------------------- */
 function mdLink(ruta, option = {validate: false}){
   validate(ruta, option)
   ruta = generateRoute(ruta)
   console.log('Ruta absoluta:', ruta);
   routeExists(ruta)
-  //leerArchivo(ruta)
   let pathType= isDirectory(ruta)
   if( pathType == true){
     //directorio
     const result = searchFiles(ruta)
-    console.log("resultado de searchFiles: ",result)
+    console.log("todos los archivos del directorio: ", result)
+    //console.log("resultado de searchFiles: ",result)
 
   }else{
     //Archivo
@@ -27,7 +28,7 @@ function mdLink(ruta, option = {validate: false}){
   //leerArchivo(ruta)
  //TODO: crear una promesa y a regresar
 }
-
+/*-------------------------------------------------------- */
 
 
 function getExtension(ruta){
@@ -45,51 +46,6 @@ function getExtension(ruta){
 
 }
 
-
-function searchFiles(directorio){
-  console.log("directorio", directorio)
-  const archivos = fs.readdirSync(directorio);
-  if (archivos.length === 0) {
-    console.log('El directorio está vacío');
-  }
-  //creo el arreglo
-  allFiles = []
-  
-  archivos.forEach((file) => {
-    const fileObsolute = path.resolve(directorio, file);
-    if (fs.lstatSync(fileObsolute).isDirectory()){
-      getRecursiveFiles =searchFiles(fileObsolute)
-      console.log("busqueda de archivo: " ,fileObsolute) 
-      allFiles.concat(getRecursiveFiles)
-    }else{
-      const route ={
-        ruta: file,
-      }
-      allFiles.push(route)
-    }
-     
-  });
-  return allFiles;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //TODO: revisar leerArchivo y cambiar nombre 
 async function leerArchivo(ruta){
   //Para este proyecto te sugerimos no utilizar la versión síncrona de 
@@ -106,13 +62,13 @@ async function leerArchivo(ruta){
   })
 }
 
-
-
 /* obtener todos los .md de un diretorio 
  files.forEach(file => {
   if (path.extname(file) == ".md")
     console.log(file);
 }) */
+
+
 
 //TERMINADAS    
 function validate(ruta, option){
@@ -151,6 +107,28 @@ function isDirectory(ruta){
     return true
   }else{
     console.log("es un archivo")
-    return false
+    
   }
+}
+
+function searchFiles(directorio){
+  const archivos = fs.readdirSync(directorio);
+
+  if (archivos.length === 0) {
+    console.log('El directorio está vacío');
+  }
+  archivos.forEach((file) => {
+    const fileObsolute = path.resolve(directorio, file);
+    if (fs.lstatSync(fileObsolute).isDirectory()){
+      const getRecursiveFiles =searchFiles(fileObsolute)
+      allFiles.concat(getRecursiveFiles)
+    }else{
+      const route ={
+        ruta: file,
+      }
+      allFiles.push(route)
+    }
+  });
+
+  return allFiles;
 }
