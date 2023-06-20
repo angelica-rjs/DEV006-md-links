@@ -1,4 +1,4 @@
-function isFilePromise(ruta) {
+/*function isFilePromise(ruta) {
     const promiseFile = new Promise ((resolve, reject)=>{
       if (ruta.length >= 3){
         resolve('si es archivo');
@@ -16,3 +16,10 @@ function isFilePromise(ruta) {
   .catch((error)=>{
   console.error(error);
   })
+
+*/
+  
+
+
+ const marked = require ( 'marcado' );
+

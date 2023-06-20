@@ -4,10 +4,17 @@
 
 const path = require('path');
 let fs = require('fs');
+//const markd = require('marked');
+//console.log (marked( '#prueba!' ));
+//const  JSDOM  = require('jsdom');
+
+const MarkdownIt = require('markdown-it')
+  const   md = new MarkdownIt();
+//console.log(md.render('# hola!'));
 
 let allFiles = []
 
-mdLink('C://Users/ange_/DEV006-md-links/directorio1/')
+mdLink('C://Users/ange_/DEV006-md-links/prueban/nn.md')
 /*-------------------------------------------------------- */
 function mdLink(ruta, option = {validate: false}){
   validate(ruta, option)
@@ -16,32 +23,41 @@ function mdLink(ruta, option = {validate: false}){
   routeExists(ruta)
   let pathType= isDirectory(ruta)
   let filesMd
-  //TODO:refactorizar el if
   if( pathType == true){
     const allFile = searchFiles(ruta)
     filesMd=getMds(allFile)
+    console.log(filesMd, "archivos que se enviaran a process file")
     filesMd.forEach((file) => {
       processFile(file)
     });
   }else{
     allFiles.push(ruta)
     filesMd= getMds(allFiles)
+    console.log(filesMd, "archivos que se enviaran a process file")
     const fileMd = filesMd[0];
     processFile(fileMd)
-
-    
   }
  //TODO: crear una promesa y a regresar
 }
 /*-------------------------------------------------------- */
 function processFile(file){
-  console.log(file) 
-  getlink(file)
-  //TODO:  -validate: true
+  console.log(file);
+  readFile(file)
+    .then((data) => {
+      console.log("Contenido del archivo:", data);
+      getLinks(data)
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+  
+
 }
 
-function getlink(file){
-  console.log("aqui obtender los link de manera asincrona")
+function getLinks(content){
+  const regexMdLinks = /\[([^\[]+)\](\(.*\))/gm;
+  const links = content.match(regexMdLinks)
+  console.log(links)
 }
 
 
@@ -58,7 +74,7 @@ function validate(ruta, option){
 
 function generateRoute(ruta){
   if (path.isAbsolute(ruta)){
-   // console.log("es absoluta")
+    //console.log("es absoluta")
   }else{
     //console.log("es relativa")
     ruta = path.resolve(ruta);
@@ -128,4 +144,15 @@ function getMds(allfiles) {
   }
 }
 
+function readFile(file) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(file, 'utf-8', (err, data) => {
+      if (err) {
+        return reject("No fue posible leer el archivo");
+      } else {
+        resolve(data);
+      }
+    });
+  });
+}
 /*-------------- */
