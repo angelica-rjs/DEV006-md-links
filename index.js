@@ -4,17 +4,10 @@
 
 const path = require('path');
 let fs = require('fs');
-//const markd = require('marked');
-//console.log (marked( '#prueba!' ));
-//const  JSDOM  = require('jsdom');
-
-const MarkdownIt = require('markdown-it')
-  const   md = new MarkdownIt();
-//console.log(md.render('# hola!'));
 
 let allFiles = []
 
-mdLink('C://Users/ange_/DEV006-md-links/prueban/nn.md')
+mdLink('C://Users/ange_/DEV006-md-links/prueban/')
 /*-------------------------------------------------------- */
 function mdLink(ruta, option = {validate: false}){
   validate(ruta, option)
@@ -44,8 +37,9 @@ function processFile(file){
   console.log(file);
   readFile(file)
     .then((data) => {
-      console.log("Contenido del archivo:", data);
-      getLinks(data)
+      
+     const links=  getLinks(data,file)
+     console.log("los links encontrado: ",links)
     })
     .catch((error) => {
       console.error(error);
@@ -54,10 +48,22 @@ function processFile(file){
 
 }
 
-function getLinks(content){
+function getLinks(content, file) {
   const regexMdLinks = /\[([^\[]+)\](\(.*\))/gm;
-  const links = content.match(regexMdLinks)
-  console.log(links)
+  const links = [];
+
+  const matches = content.matchAll(regexMdLinks);
+  for (const match of matches) {
+    const [, text, href] = match;
+    links.push({
+      href: href.replace(/[()]/g, ''),
+      text,
+      file: file
+    });
+  }
+  
+
+  return links;
 }
 
 
