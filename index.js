@@ -10,28 +10,30 @@ let allFiles = []
 mdLink('C://Users/ange_/DEV006-md-links/prueban/')
 /*-------------------------------------------------------- */
 function mdLink(ruta, option = {validate: false}){
-  validate(ruta, option)
-  ruta = generateRoute(ruta)
- // console.log('Ruta absoluta:', ruta);
-  routeExists(ruta)
-  let pathType= isDirectory(ruta)
-  let filesMd
-  if( pathType == true){
+  return new Promise((resolve, reject) =>{
+    validateParameter(ruta, option)
+    ruta = generateRoute(ruta)
+    routeExists(ruta)
+    let pathType= isDirectory(ruta)
+    let filesMd
+    if( pathType == true){
     const allFile = searchFiles(ruta)
     filesMd=getMds(allFile)
     console.log(filesMd, "archivos que se enviaran a process file")
     filesMd.forEach((file) => {
-      processFile(file)
+    processFile(file)
     });
-  }else{
+    }else{
     allFiles.push(ruta)
     filesMd= getMds(allFiles)
     console.log(filesMd, "archivos que se enviaran a process file")
     const fileMd = filesMd[0];
     processFile(fileMd)
-  }
- //TODO: crear una promesa y a regresar
+    }
+  })
 }
+
+
 /*-------------------------------------------------------- */
 function processFile(file){
   console.log(file);
@@ -48,28 +50,11 @@ function processFile(file){
 
 }
 
-function getLinks(content, file) {
-  const regexMdLinks = /\[([^\[]+)\](\(.*\))/gm;
-  const links = [];
-
-  const matches = content.matchAll(regexMdLinks);
-  for (const match of matches) {
-    const [, text, href] = match;
-    links.push({
-      href: href.replace(/[()]/g, ''),
-      text,
-      file: file
-    });
-  }
-  
-
-  return links;
-}
 
 
 
 //TERMINADAS    
-function validate(ruta, option){
+function validateParameter(ruta, option){
   if(ruta == null){
     throw new TypeError("La ruta no debe ser nula")
   }
@@ -161,4 +146,23 @@ function readFile(file) {
     });
   });
 }
+
+function getLinks(content, file) {
+  const regexMdLinks = /\[([^\[]+)\](\(.*\))/gm;
+  const links = [];
+
+  const matches = content.matchAll(regexMdLinks);
+  for (const match of matches) {
+    const [, text, href] = match;
+    links.push({
+      href: href.replace(/[()]/g, ''),
+      text,
+      file: file
+    });
+  }
+  
+
+  return links;
+}
+
 /*-------------- */
