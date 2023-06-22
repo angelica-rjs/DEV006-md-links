@@ -35,16 +35,16 @@ function mdLink(ruta, option = {validate: false}){
 }
 
 /*-------------------------------------------------------- */
-function processFile(file){
+function processFile(file, option){
   console.log(file);
   readFile(file)
     .then((data) => {
       const links=  getLinks(data,file)
-      if(option.validate === true){
+      /*if(option.validate === true){
         console.log("validate es true")
       }else{
         console.log("validate es false")
-      }
+      }*/
      //console.log("los links encontrado: ",links)
     })
     .catch((error) => {
@@ -149,5 +149,23 @@ function readFile(file) {
       }
     });
   });
+}
+
+function getLinks(content, file) {
+  const regexMdLinks = /\[([^\[]+)\](\(.*\))/gm;
+  const links = [];
+
+  const matches = content.matchAll(regexMdLinks);
+  for (const match of matches) {
+    const [, text, href] = match;
+    links.push({
+      href: href.replace(/[()]/g, ''),
+      text,
+      file: file
+    });
+  }
+  
+
+  return links;
 }
 /*-------------- */
