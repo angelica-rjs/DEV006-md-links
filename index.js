@@ -7,7 +7,7 @@ let fs = require('fs');
 
 let allFiles = []
 
-mdLink('C://Users/ange_/DEV006-md-links/prueban/')
+mdLink('C://Users/ange_/DEV006-md-links/prueban/', {validate: true})
 /*-------------------------------------------------------- */
 function mdLink(ruta, option = {validate: false}){
   return new Promise((resolve, reject) =>{
@@ -20,16 +20,16 @@ function mdLink(ruta, option = {validate: false}){
     if( pathType == true){
       const allFile = searchFiles(ruta)
       filesMd=getMds(allFile)
-      console.log(filesMd, "archivos que se enviaran a process file")
+      //console.log(filesMd, "archivos que se enviaran a process file")
       filesMd.forEach((file) => {
-        processFile(file)
+        processFile(file, option)
       });
     }else{
       allFiles.push(ruta)
       filesMd= getMds(allFiles)
       console.log(filesMd, "archivos que se enviaran a process file")
-      const fileMd = filesMd[0];
-      processFile(fileMd)
+      //const fileMd = filesMd[0];
+      processFile(filesMd, option)
     }
   })
 }
@@ -39,12 +39,12 @@ function processFile(file, option){
   console.log(file);
   readFile(file)
     .then((data) => {
-      const links=  getLinks(data,file)
-      /*if(option.validate === true){
+      //const links=  getLinks(data,file)
+      if(option.validate === true){
         console.log("validate es true")
       }else{
         console.log("validate es false")
-      }*/
+      }
      //console.log("los links encontrado: ",links)
     })
     .catch((error) => {
