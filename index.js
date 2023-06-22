@@ -4,6 +4,7 @@
 
 const path = require('path');
 let fs = require('fs');
+const axios = require('axios');
 
 let allFiles = []
 
@@ -27,7 +28,7 @@ function mdLink(ruta, option = {validate: false}){
     }else{
       allFiles.push(ruta)
       filesMd= getMds(allFiles)
-      console.log(filesMd, "archivos que se enviaran a process file")
+      //console.log(filesMd, "archivos que se enviaran a process file")
       //const fileMd = filesMd[0];
       processFile(filesMd, option)
     }
@@ -39,22 +40,32 @@ function processFile(file, option){
   console.log(file);
   readFile(file)
     .then((data) => {
-      //const links=  getLinks(data,file)
+      const objLink=  getLinks(data,file)
+      console.log(objLink)
       if(option.validate === true){
-        console.log("validate es true")
+        //console.log("validate es true")
+       getEstatus(objLink)
       }else{
-        console.log("validate es false")
+        //console.log("validate es false")
+        return objLinklinks
       }
-     //console.log("los links encontrado: ",links)
     })
     .catch((error) => {
       console.error(error);
     });
-  
+  }
 
+function getEstatus(links){
+  const promise = links.map(objeto =>{
+    return axios.get(objeto.href)
+    .then((response)=>{
+      console.log("aqui response: ",response.status)
+    }).catch((error)=>{
+      console.log("aqui error: ",error)
+    })
+  })
+  return Promise.all(promise)
 }
-
-
 
 
 //TERMINADAS    
@@ -164,7 +175,7 @@ function getLinks(content, file) {
       file: file
     });
   }
-  
+  //console.log(links)
 
   return links;
 }
