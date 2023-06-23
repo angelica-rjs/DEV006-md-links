@@ -36,36 +36,48 @@ function mdLink(ruta, option = {validate: false}){
 }
 
 /*-------------------------------------------------------- */
-function processFile(file, option){
+function processFile(file, option) {
   console.log(file);
   readFile(file)
     .then((data) => {
-      const objLink=  getLinks(data,file)
-      console.log(objLink)
-      if(option.validate === true){
-        //console.log("validate es true")
-       getEstatus(objLink)
-      }else{
-        //console.log("validate es false")
-        return objLinklinks
+      const objLink = getLinks(data, file);
+      if (option.validate === true) {
+        return getEstatus(objLink);
+      } else {
+        return objLink;
       }
+    })
+    .then((result) => {
+      console.log(result);
     })
     .catch((error) => {
       console.error(error);
     });
-  }
-
-function getEstatus(links){
-  const promise = links.map(objeto =>{
-    return axios.get(objeto.href)
-    .then((response)=>{
-      console.log("aqui response: ",response.status)
-    }).catch((error)=>{
-      console.log("aqui error: ",error)
-    })
-  })
-  return Promise.all(promise)
 }
+
+function getEstatus(links) {
+  const promise = links.map(objeto => {
+    return axios.head(objeto.href)
+      .then((response) => {
+        if (response.status >= 200 && response.status < 300) {
+          objeto.status = response.status;
+          objeto.ok = 'ok';
+        } else {
+          objeto.status = response.status;
+          objeto.ok = 'fail';
+        }
+        return objeto;
+      })
+      .catch((error) => {
+        objeto.status = 'Error'; 
+        objeto.ok = 'fail'; 
+        return objeto;
+      });
+  });
+  return Promise.all(promise);
+}
+
+
 
 
 //TERMINADAS    
