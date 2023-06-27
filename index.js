@@ -1,6 +1,7 @@
-/*export default () => {
-  const fs = required('fs')
-};*/
+module.exports = {
+  validateParameter,
+};
+
 
 const path = require('path');
 let fs = require('fs');
@@ -8,79 +9,71 @@ const axios = require('axios');
 
 let allFiles = []
 
-mdLink('C://Users/ange_/DEV006-md-links/prueban/', {validate: true})
+//mdLink('C://Users/ange_/DEV006-md-links/prueban/', {validate: true})
 /*-------------------------------------------------------- */
-function mdLink(ruta, option = {validate: false}){
-  return new Promise((resolve, reject) =>{
-    validateParameter(ruta, option)
-    ruta = generateRoute(ruta)
-    // console.log('Ruta absoluta:', ruta);
-    routeExists(ruta)
-    let pathType= isDirectory(ruta)
-    let filesMd
-    if( pathType == true){
-      const allFile = searchFiles(ruta)
-      filesMd=getMds(allFile)
-      //console.log(filesMd, "archivos que se enviaran a process file")
-      filesMd.forEach((file) => {
-        processFile(file, option)
-      });
-    }else{
-      allFiles.push(ruta)
-      filesMd= getMds(allFiles)
-      //console.log(filesMd, "archivos que se enviaran a process file")
-      //const fileMd = filesMd[0];
-      processFile(filesMd, option)
+function mdLink(ruta, option = { validate: false }) {
+  return new Promise((resolve, reject) => {
+    validateParameter(ruta, option);
+    ruta = generateRoute(ruta);
+    routeExists(ruta);
+    let pathType = isDirectory(ruta);
+    let filesMd;
+    if (pathType == true) {
+      const allFile = searchFiles(ruta);
+      filesMd = getMds(allFile);
+      const promises = filesMd.map((file) => processFile(file, option));
+      Promise.all(promises)
+        .then((results) => {
+          const flattenedResults = results.flat();
+          flattenedResults.forEach((result) => {
+            console.log(result);
+          });
+          resolve(flattenedResults);
+        })
+        .catch((error) => {
+          console.error(error);
+          reject(error);
+        });
+    } else {
+      allFiles.push(ruta);
+      filesMd = getMds(allFiles);
+      processFile(filesMd[0], option)
+        .then((result) => {
+          console.log(result[0]);
+          resolve(result);
+        })
+        .catch((error) => {
+          console.error(error);
+          reject(error);
+        });
     }
-  })
+  });
 }
 
-/*-------------------------------------------------------- */
 function processFile(file, option) {
   console.log(file);
-  readFile(file)
-    .then((data) => {
-      const objLink = getLinks(data, file);
-      if (option.validate === true) {
-        return getEstatus(objLink);
-      } else {
-        return objLink;
-      }
-    })
-    .then((result) => {
-      console.log(result);
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-}
-
-function getEstatus(links) {
-  const promise = links.map(objeto => {
-    return axios.head(objeto.href)
-      .then((response) => {
-        if (response.status >= 200 && response.status < 300) {
-          objeto.status = response.status;
-          objeto.ok = 'ok';
+  return new Promise((resolve, reject) => {
+    readFile(file)
+      .then((data) => {
+        let objLink = getLinks(data, file);
+        if (option.validate === true) {
+          return getEstatus(objLink);
         } else {
-          objeto.status = response.status;
-          objeto.ok = 'fail';
+          return objLink;
         }
-        return objeto;
+      })
+      .then((result) => {
+       // console.log(result);
+        resolve(result);
       })
       .catch((error) => {
-        objeto.status = 'Error'; 
-        objeto.ok = 'fail'; 
-        return objeto;
+        console.error(error);
+        reject(error);
       });
   });
-  return Promise.all(promise);
 }
 
-
-
-
-//TERMINADAS    
+//TERMINADAS
 function validateParameter(ruta, option){
   if(ruta == null){
     throw new TypeError("La ruta no debe ser nula")
@@ -150,9 +143,9 @@ function getMds(allfiles) {
     }
   });
 
-  allfiles.length = 0; 
+  allfiles.length = 0;
   allFiles.push.apply(allfiles, archivosMd);
-  
+
 
   if(allFiles.length > 0){
     //console.log("array filtrado: ", allFiles)
@@ -191,4 +184,27 @@ function getLinks(content, file) {
 
   return links;
 }
+
+function getEstatus(links) {
+  const promise = links.map(objeto => {
+    return axios.head(objeto.href)
+      .then((response) => {
+        if (response.status >= 200 && response.status < 300) {
+          objeto.status = response.status;
+          objeto.ok = 'ok';
+        } else {
+          objeto.status = response.status;
+          objeto.ok = 'fail';
+        }
+        return objeto;
+      })
+      .catch((error) => {
+        objeto.status = 'Error';
+        objeto.ok = 'fail';
+        return objeto;
+      });
+  });
+  return Promise.all(promise);
+}
 /*-------------- */
+
