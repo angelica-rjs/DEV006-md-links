@@ -1,5 +1,6 @@
 module.exports = {
   validateParameter,
+  generateRoute,
 };
 
 
@@ -79,7 +80,7 @@ function validateParameter(ruta, option){
     throw new TypeError("La ruta no debe ser nula")
   }
   if(typeof option === "boolean"){
-    throw new TypeError("debe ingresar un booleano")
+    throw new TypeError('debe ingresar un objeto que contenga un booleano')
   }
 }
 
