@@ -14,7 +14,8 @@ const axios = require('axios');
 
 let allFiles = []
 
-mdLink('prueban/pruebam/pruebam.md', {validate: true})
+//mdLink('C://Users/ange_/DEV006-md-links/directorio1', {validate: true})
+mdLink('C://Users/ange_/DEV006-md-links/prueban', {validate: true})
 /*-------------------------------------------------------- */
 function mdLink(ruta, option = {validate: false}){
   return new Promise((resolve, reject) =>{
