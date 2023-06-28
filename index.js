@@ -39,21 +39,21 @@ function processFile(file){
   console.log(file);
   readFile(file)
     .then((data) => {
-      
+
      const links=  getLinks(data,file)
      console.log("los links encontrado: ",links)
     })
     .catch((error) => {
       console.error(error);
     });
-  
+
 
 }
 
 
 
 
-//TERMINADAS    
+//TERMINADAS
 function validateParameter(ruta, option){
   if(ruta == null){
     throw new TypeError("La ruta no debe ser nula")
@@ -123,9 +123,9 @@ function getMds(allfiles) {
     }
   });
 
-  allfiles.length = 0; 
+  allfiles.length = 0;
   allFiles.push.apply(allfiles, archivosMd);
-  
+
 
   if(allFiles.length > 0){
     //console.log("array filtrado: ", allFiles)
@@ -160,7 +160,7 @@ function getLinks(content, file) {
       file: file
     });
   }
-  
+
 
   return links;
 }
