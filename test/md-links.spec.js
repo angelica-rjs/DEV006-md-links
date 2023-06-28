@@ -40,8 +40,8 @@ describe('converting absolute path', () =>{
   })
   it('if the path is relative', () => {
     const prueba = generateRoute('./prueban')
-    const result = 'C://Users/ange_/DEV006-md-links/prueban'
-    expect(prueba).toBe(result)
+    expect(prueba).toBe("C:\\Users\\ange_\\DEV006-md-links\\prueban");
+
   })
 })
 
@@ -75,15 +75,26 @@ describe('know if it is a directory or a file', () =>{
 describe('get mg files', () =>{
   it('if there is more than one md file', ()=>{
     const recived = ['pruebam.md', 'n.html', 'nn.md', 'nn.js']
-    const expectt = ['pruebam.md', 'nn.md']
+    const exectt = ['pruebam.md', 'nn.md']
     const result = getMds(recived)
-    expect(result).toStrictEqual(expectt)
+  expect(result).toStrictEqual(exectt)
   })
 })
 
 
 //getLinks
-/*describe('get link of md files', ()=>{
-  it
-})*/
-
+describe('get link of md files', () => {
+  it('match link', () => {
+    const content = '[Node.js](https://nodejs.org/es/) es un entorno aScript '
+    const file = "C:\\Users\\ange_\\DEV006-md-links\\prueban"
+    const rta = getLinks(content, file);
+    const result = [
+      {
+        href: 'https://nodejs.org/es/',
+        text: 'Node.js',
+        file: "C:\\Users\\ange_\\DEV006-md-links\\prueban"
+      }
+    ];
+    expect(result).toStrictEqual(rta);
+  });
+});

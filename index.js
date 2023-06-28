@@ -71,25 +71,30 @@ function validateParameter(ruta, option) {
 function generateRoute(ruta){
   if(!path.isAbsolute(ruta)){
     const pathObsolute =  path.resolve(ruta);
+    console.log('la ruta es absoluta')
     return pathObsolute
   }else{
+    console.log('la ruta es relativa')
   return ruta
   }
 }
 
 function routeExists(ruta) {
   if (fs.existsSync(ruta)) {
+    console.log('la ruta existe')
     return ruta;
   } else {
+    console.log('la ruta no existe')
     throw new TypeError("La ruta no existe");
   }
 }
 
 function isDirectory(ruta){
   if(fs.lstatSync(ruta).isDirectory()){
-    //console.log("es un directorio")
+    console.log("es un directorio")
     return true
   }else{
+    console.log('es un archivo')
     return false
   }
 }
@@ -97,7 +102,7 @@ function isDirectory(ruta){
 function getMds(allfiles) {
   const archivosMd = allfiles.filter(archivo => {
     if (typeof archivo === "string" && archivo.split(".").pop() === "md") {
-      //console.log("Es md: ",  archivo);
+      console.log("archivos md: ",  archivo);
       return true;
     } else {
       //console.log("No es md: ", archivo);
