@@ -14,50 +14,68 @@ const axios = require('axios');
 
 let allFiles = []
 
-//mdLink('C://Users/ange_/DEV006-md-links/directorio1', {validate: true})
-mdLink('C://Users/ange_/DEV006-md-links/prueban', {validate: true})
+mdLink('directorio1', {validate: true})
 /*-------------------------------------------------------- */
-function mdLink(ruta, option = {validate: false}){
-  return new Promise((resolve, reject) =>{
-    validateParameter(ruta, option)
-    ruta = generateRoute(ruta)
-    routeExists(ruta)
-    let pathType= isDirectory(ruta)
-    let filesMd
-    if( pathType == true){
-    const allFile = searchFiles(ruta)
-    filesMd=getMds(allFile)
-    console.log(filesMd, "archivos que se enviaran a process file")
-    filesMd.forEach((file) => {
-    processFile(file)
-    });
-    }else{
-    allFiles.push(ruta)
-    filesMd= getMds(allFiles)
-    console.log(filesMd, "archivos que se enviaran a process file")
-    const fileMd = filesMd[0];
-    processFile(fileMd)
+function mdLink(ruta, option = { validate: false }) {
+  return new Promise((resolve, reject) => {
+    validateParameter(ruta, option);
+    ruta = generateRoute(ruta);
+    routeExists(ruta);
+    let pathType = isDirectory(ruta);
+    let filesMd;
+    if (pathType == true) {
+      const allFile = searchFiles(ruta);
+      filesMd = getMds(allFile);
+      const promises = filesMd.map((file) => processFile(file, option));
+      Promise.all(promises)
+        .then((results) => {
+          const flattenedResults = results.flat();
+          flattenedResults.forEach((result) => {
+            console.log(result);
+          });
+          resolve(flattenedResults);
+        })
+        .catch((error) => {
+          console.error(error);
+          reject(error);
+        });
+    } else {
+      allFiles.push(ruta);
+      filesMd = getMds(allFiles);
+      processFile(filesMd[0], option)
+        .then((result) => {
+          console.log(result[0]);
+          resolve(result);
+        })
+        .catch((error) => {
+          console.error(error);
+          reject(error);
+        });
     }
-  })
+  });
 }
-
-
-/*-------------------------------------------------------- */
-function processFile(file){
+function processFile(file, option) {
   console.log(file);
-  readFile(file)
-    .then((data) => {
-
-     const links=  getLinks(data,file)
-     console.log("los links encontrado: ",links)
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-
-
+  return new Promise((resolve, reject) => {
+    readFile(file)
+      .then((data) => {
+        let objLink = getLinks(data, file);
+        if (option.validate === true) {
+          return getEstatus(objLink);
+        } else {
+          return objLink;
+        }
+      })
+      .then((result) => {
+       // console.log(result);
+        resolve(result);
+      })
+      .catch((error) => {
+        console.error(error);
+        reject(error);
+      });
+  });
 }
-
 //TERMINADAS
 /*---------- testeadas------------ */
 function validateParameter(ruta, option) {
@@ -72,7 +90,6 @@ function validateParameter(ruta, option) {
 function generateRoute(ruta){
   if(!path.isAbsolute(ruta)){
     const pathObsolute =  path.resolve(ruta);
-    console.log('la ruta es absoluta')
     return pathObsolute
   }else{
     console.log('la ruta es relativa')
@@ -172,6 +189,8 @@ function getEstatus(links) {
   });
   return Promise.all(promise);
 }
+
+
 
 function searchFiles(directorio){
   const archivos = fs.readdirSync(directorio);
