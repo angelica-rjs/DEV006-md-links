@@ -3,6 +3,8 @@ module.exports = {
   generateRoute,
   routeExists,
   isDirectory,
+  getMds,
+  getLinks,
 };
 
 
@@ -12,7 +14,7 @@ const axios = require('axios');
 
 let allFiles = []
 
-//mdLink('./prueban/', {validate: true})
+mdLink('C://Users/ange_/DEV006-md-links/prueban/pruebam/pruebam.md', {validate: true})
 /*-------------------------------------------------------- */
 function mdLink(ruta, option = { validate: false }) {
   return new Promise((resolve, reject) => {
@@ -111,11 +113,6 @@ function isDirectory(ruta){
     return false
   }
 }
-/* ------------------------------- */
-
-
-
-
 
 function getMds(allfiles) {
   const archivosMd = allfiles.filter(archivo => {
@@ -128,19 +125,14 @@ function getMds(allfiles) {
     }
   });
 
-  allfiles.length = 0;
-  allFiles.push.apply(allfiles, archivosMd);
-
-
-  if(allFiles.length > 0){
+  if(archivosMd.length > 0){
     //console.log("array filtrado: ", allFiles)
-  return allfiles;
+  return archivosMd;
   }else{
-    //console.log("fin del flujo, no se encontro md")
+    console.log("fin del flujo, no se encontro md")
   }
 }
-
-
+/* ------------------------------- */
 
 function getLinks(content, file) {
   const regexMdLinks = /\[([^\[]+)\](\(.*\))/gm;

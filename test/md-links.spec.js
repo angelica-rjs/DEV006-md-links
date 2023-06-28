@@ -1,4 +1,4 @@
-const { validateParameter, generateRoute, routeExists, isDirectory } = require('../');
+const { validateParameter, generateRoute, routeExists, isDirectory, getMds, getLinks} = require('../');
 const path = require('path');
 
 /*describe('mdLinks', () => {
@@ -9,7 +9,7 @@ const path = require('path');
 
 });*/
 
-
+// validateParameter
 describe('validateParameter', () => {
   it('should throw an error if "ruta" parameter is null', () => {
     expect(() => {
@@ -30,7 +30,7 @@ describe('validateParameter', () => {
   });
 });
 
-
+//generateRoute
 describe('converting absolute path', () =>{
   it('if the path is absolute', () => {
     const absolutePath = 'C://Users/ange_/DEV006-md-links/prueban/';
@@ -45,6 +45,7 @@ describe('converting absolute path', () =>{
   })
 })
 
+//routeExists
 describe('check if path exists',()=>{
   it('if the path does not exist', () => {
     expect(() => {
@@ -58,6 +59,7 @@ it('si la ruta existe', () =>{
 })
 })
 
+//isDirectory
 describe('know if it is a directory or a file', () =>{
   it('if it is a directory', ()=>{
     const route = 'C://Users/ange_/DEV006-md-links/prueban/'
@@ -69,4 +71,19 @@ describe('know if it is a directory or a file', () =>{
   })
 })
 
+//getMds
+describe('get mg files', () =>{
+  it('if there is more than one md file', ()=>{
+    const recived = ['pruebam.md', 'n.html', 'nn.md', 'nn.js']
+    const expectt = ['pruebam.md', 'nn.md']
+    const result = getMds(recived)
+    expect(result).toStrictEqual(expectt)
+  })
+})
+
+
+//getLinks
+/*describe('get link of md files', ()=>{
+  it
+})*/
 
