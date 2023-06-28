@@ -14,6 +14,7 @@ const axios = require('axios');
 
 let allFiles = []
 
+
 mdLink('directorio1', {validate: true})
 /*-------------------------------------------------------- */
 function mdLink(ruta, option = { validate: false }) {
@@ -152,8 +153,10 @@ function getLinks(content, file) {
   }
 
 
-  return links;
+
+
 }
+
 
 /*---------- asincrona------------ */
 function readFile(file) {
@@ -166,6 +169,8 @@ function readFile(file) {
       }
     });
   });
+
+
 }
 
 function getEstatus(links) {
