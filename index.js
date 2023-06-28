@@ -1,6 +1,7 @@
 module.exports = {
   validateParameter,
   generateRoute,
+  routeExists,
 };
 
 
@@ -75,33 +76,29 @@ function processFile(file, option) {
 }
 
 //TERMINADAS
-function validateParameter(ruta, option){
-  if(ruta == null){
-    throw new TypeError("La ruta no debe ser nula")
+function validateParameter(ruta, option) {
+  if (ruta === null) {
+    throw new TypeError("La ruta no debe ser nula");
   }
-  if(typeof option === "boolean"){
-    throw new TypeError('debe ingresar un objeto que contenga un booleano')
+  if (typeof option !== "object" || option === null || typeof option.validate !== "boolean") {
+    throw new TypeError('Debe ingresar un objeto que contenga un booleano en la propiedad "validate"');
   }
 }
+
 
 function generateRoute(ruta){
-  if (path.isAbsolute(ruta)){
-    //console.log("es absoluta")
+  if(!path.isAbsolute(ruta)){
+    return path.resolve(ruta);
   }else{
-    //console.log("es relativa")
-    ruta = path.resolve(ruta);
-    }
   return ruta
+  }
 }
 
-function routeExists(ruta){
-  //sincrono
-  try {
-    fs.accessSync(ruta);
-    //console.log("la ruta existe")
-    return ruta
-  } catch (error) {
-    throw new TypeError("La ruta no existe")
+function routeExists(ruta) {
+  if (fs.existsSync(ruta)) {
+    return ruta;
+  } else {
+    throw new TypeError("La ruta no existe");
   }
 }
 
