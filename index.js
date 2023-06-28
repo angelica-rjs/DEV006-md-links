@@ -147,7 +147,7 @@ function getLinks(content, file) {
       file: file
     });
   }
-  //console.log(links)
+
 
   return links;
 }
