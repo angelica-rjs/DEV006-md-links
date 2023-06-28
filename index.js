@@ -7,7 +7,7 @@ let fs = require('fs');
 
 let allFiles = []
 
-mdLink('C://Users/ange_/DEV006-md-links/prueban/')
+mdLink('C://Users/ange_/DEV006-md-links/prueban')
 /*-------------------------------------------------------- */
 function mdLink(ruta, option = {validate: false}){
   return new Promise((resolve, reject) =>{
