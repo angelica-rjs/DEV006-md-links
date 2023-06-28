@@ -2,6 +2,7 @@ module.exports = {
   validateParameter,
   generateRoute,
   routeExists,
+  isDirectory,
 };
 
 
@@ -11,7 +12,7 @@ const axios = require('axios');
 
 let allFiles = []
 
-//mdLink('C://Users/ange_/DEV006-md-links/prueban/', {validate: true})
+//mdLink('./prueban/', {validate: true})
 /*-------------------------------------------------------- */
 function mdLink(ruta, option = { validate: false }) {
   return new Promise((resolve, reject) => {
@@ -76,6 +77,7 @@ function processFile(file, option) {
 }
 
 //TERMINADAS
+/*---------- testeadas------------ */
 function validateParameter(ruta, option) {
   if (ruta === null) {
     throw new TypeError("La ruta no debe ser nula");
@@ -84,7 +86,6 @@ function validateParameter(ruta, option) {
     throw new TypeError('Debe ingresar un objeto que contenga un booleano en la propiedad "validate"');
   }
 }
-
 
 function generateRoute(ruta){
   if(!path.isAbsolute(ruta)){
@@ -107,28 +108,14 @@ function isDirectory(ruta){
     //console.log("es un directorio")
     return true
   }else{
-    //console.log("es un archivo")
+    return false
   }
 }
+/* ------------------------------- */
 
-function searchFiles(directorio){
-  const archivos = fs.readdirSync(directorio);
 
-  if (archivos.length === 0) {
-    //console.log('El directorio está vacío');
-  }
-  archivos.forEach((file) => {
-    const fileObsolute = path.resolve(directorio, file);
-    if (fs.lstatSync(fileObsolute).isDirectory()){
-      const getRecursiveFiles =searchFiles(fileObsolute)
-      allFiles.concat(getRecursiveFiles)
-    }else{
-      allFiles.push(fileObsolute)
-    }
-  });
 
-  return allFiles;
-}
+
 
 function getMds(allfiles) {
   const archivosMd = allfiles.filter(archivo => {
@@ -153,17 +140,7 @@ function getMds(allfiles) {
   }
 }
 
-function readFile(file) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(file, 'utf-8', (err, data) => {
-      if (err) {
-        return reject("No fue posible leer el archivo");
-      } else {
-        resolve(data);
-      }
-    });
-  });
-}
+
 
 function getLinks(content, file) {
   const regexMdLinks = /\[([^\[]+)\](\(.*\))/gm;
@@ -181,6 +158,19 @@ function getLinks(content, file) {
   //console.log(links)
 
   return links;
+}
+
+/*---------- asincrona------------ */
+function readFile(file) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(file, 'utf-8', (err, data) => {
+      if (err) {
+        return reject("No fue posible leer el archivo");
+      } else {
+        resolve(data);
+      }
+    });
+  });
 }
 
 function getEstatus(links) {
@@ -204,5 +194,27 @@ function getEstatus(links) {
   });
   return Promise.all(promise);
 }
-/*-------------- */
+
+function searchFiles(directorio){
+  const archivos = fs.readdirSync(directorio);
+
+  if (archivos.length === 0) {
+    //console.log('El directorio está vacío');
+  }
+  archivos.forEach((file) => {
+    const fileObsolute = path.resolve(directorio, file);
+    if (fs.lstatSync(fileObsolute).isDirectory()){
+      const getRecursiveFiles =searchFiles(fileObsolute)
+      allFiles.concat(getRecursiveFiles)
+    }else{
+      allFiles.push(fileObsolute)
+    }
+  });
+
+  return allFiles;
+}
+/* ------------------------------- */
+
+
+
 

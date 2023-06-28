@@ -1,4 +1,4 @@
-const { validateParameter, generateRoute, routeExists } = require('../');
+const { validateParameter, generateRoute, routeExists, isDirectory } = require('../');
 const path = require('path');
 
 /*describe('mdLinks', () => {
@@ -56,6 +56,17 @@ it('si la ruta existe', () =>{
   const result = 'C://Users/ange_/DEV006-md-links/prueban/'
   expect(routeExists(result)).toEqual(result)
 })
+})
+
+describe('know if it is a directory or a file', () =>{
+  it('if it is a directory', ()=>{
+    const route = 'C://Users/ange_/DEV006-md-links/prueban/'
+  expect(isDirectory(route)).toEqual(true)
+  })
+  it('if it is a file', ()=>{
+    const route2 = 'C://Users/ange_/DEV006-md-links/prueban/nn.md'
+  expect(isDirectory(route2)).toEqual(false)
+  })
 })
 
 
